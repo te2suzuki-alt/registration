@@ -2,25 +2,224 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>参加登録</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --business: #1a2744;
+    --sports:   #0f5e2e;
+    --arts:     #7c1c3a;
+    --music:    #3a1a6e;
+    --bg: #f4f1eb;
+    --card-radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  header { text-align: center; margin-bottom: 2.5rem; }
+  .event-label { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #888; margin-bottom: 8px; }
+  h1 { font-size: 30px; font-weight: 900; color: #1a1a1a; line-height: 1.2; }
+  .instruction { margin-top: 10px; font-size: 15px; color: #555; }
+
+  .grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 18px; width: 100%; max-width: 560px; margin-bottom: 3rem;
+  }
+
+  .card {
+    position: relative; border-radius: var(--card-radius); overflow: hidden;
+    cursor: pointer; aspect-ratio: 1 / 1.1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; border: none; outline: none;
+    transition: transform 0.15s cubic-bezier(.2,.8,.4,1), box-shadow 0.15s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+    user-select: none; -webkit-user-select: none;
+  }
+  .card::before { content: ''; position: absolute; inset: 0; background: inherit; z-index: 0; }
+  .card:active { transform: scale(0.95); }
+  .card.business { background: var(--business); }
+  .card.sports   { background: var(--sports); }
+  .card.arts     { background: var(--arts); }
+  .card.music    { background: var(--music); }
+  .card::after {
+    content: ''; position: absolute; width: 150%; aspect-ratio: 1;
+    border-radius: 50%; background: rgba(255,255,255,0.06);
+    bottom: -40%; right: -30%; z-index: 0;
+  }
+  .card-icon  { font-size: 52px; line-height: 1; position: relative; z-index: 1; }
+  .card-label { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.1em; position: relative; z-index: 1; }
+  .card-sub   { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.08em; position: relative; z-index: 1; }
+
+  .counters { width: 100%; max-width: 560px; }
+  .counters h2 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 14px; }
+  .counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .counter-item {
+    background: #fff; border-radius: 14px; padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+  .counter-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
+  .counter-item.business .counter-dot { background: var(--business); }
+  .counter-item.sports   .counter-dot { background: var(--sports); }
+  .counter-item.arts     .counter-dot { background: var(--arts); }
+  .counter-item.music    .counter-dot { background: var(--music); }
+  .counter-name { font-size: 13px; color: #333; font-weight: 700; flex: 1; }
+  .counter-num  { font-size: 24px; font-weight: 900; color: #1a1a1a; }
+
+  /* 登録完了画面 */
+  #complete-screen {
+    display: none; position: fixed; inset: 0;
+    background: var(--bg); z-index: 200;
+    flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  }
+  #complete-screen.show { display: flex; }
+  .complete-icon  { font-size: 72px; }
+  .complete-title { font-size: 26px; font-weight: 900; color: #1a1a1a; }
+  .complete-badge {
+    font-size: 16px; font-weight: 700; padding: 8px 24px;
+    border-radius: 20px; margin-top: 4px;
+  }
+  .complete-badge.business { background: #e8eaf6; color: var(--business); }
+  .complete-badge.sports   { background: #e8f5e9; color: var(--sports); }
+  .complete-badge.arts     { background: #fce4ec; color: var(--arts); }
+  .complete-badge.music    { background: #ede7f6; color: var(--music); }
+  .complete-note { font-size: 13px; color: #aaa; margin-top: 8px; }
+</style>
 </head>
 <body>
+
 <script>
-var FORM_URL = 'https://docs.google.com/forms/d/18RIeEsGAyXZM98cuJW_Ooa6ZrLx2UsgETl589nQN_U4/formResponse';
-var ENTRY = 'entry.1827699774';
-var HOME = 'https://te2suzuki-alt.github.io/registration/';
+  // ボタンを押した後、フォーム送信からリダイレクトで戻ってきた場合
+  var params = new URLSearchParams(window.location.search);
+  var registeredMajor = params.get('r');
+  var registeredKey   = params.get('k');
+  if (registeredMajor && registeredKey) {
+    history.replaceState({}, '', window.location.pathname);
+  }
+</script>
 
-var params = new URLSearchParams(window.location.search);
-var major = params.get('major');
+<header>
+  <p class="event-label">Event Registration</p>
+  <h1>参加登録</h1>
+  <p class="instruction">専攻をタップして登録してください</p>
+</header>
 
-if (major) {
-  // フォームに送信してホームに戻る
-  window.location.href = FORM_URL + '?' + ENTRY + '=' + encodeURIComponent(major) + '&submit=Submit';
-} else {
-  // 登録画面を表示
-  document.write('登録画面');
-}
+<div class="grid">
+  <button class="card business" onclick="register('ビジネス','business')">
+    <span class="card-icon">💼</span>
+    <span class="card-label">ビジネス</span>
+    <span class="card-sub">専攻</span>
+  </button>
+  <button class="card sports" onclick="register('スポーツ','sports')">
+    <span class="card-icon">⚽</span>
+    <span class="card-label">スポーツ</span>
+    <span class="card-sub">専攻</span>
+  </button>
+  <button class="card arts" onclick="register('美術','arts')">
+    <span class="card-icon">🎨</span>
+    <span class="card-label">美術</span>
+    <span class="card-sub">専攻</span>
+  </button>
+  <button class="card music" onclick="register('音楽','music')">
+    <span class="card-icon">🎵</span>
+    <span class="card-label">音楽</span>
+    <span class="card-sub">専攻</span>
+  </button>
+</div>
+
+<div class="counters">
+  <h2>本日の参加者数</h2>
+  <div class="counter-grid">
+    <div class="counter-item business">
+      <span class="counter-dot"></span>
+      <span class="counter-name">ビジネス</span>
+      <span class="counter-num" id="cnt-business">0</span>
+    </div>
+    <div class="counter-item sports">
+      <span class="counter-dot"></span>
+      <span class="counter-name">スポーツ</span>
+      <span class="counter-num" id="cnt-sports">0</span>
+    </div>
+    <div class="counter-item arts">
+      <span class="counter-dot"></span>
+      <span class="counter-name">美術</span>
+      <span class="counter-num" id="cnt-arts">0</span>
+    </div>
+    <div class="counter-item music">
+      <span class="counter-dot"></span>
+      <span class="counter-name">音楽</span>
+      <span class="counter-num" id="cnt-music">0</span>
+    </div>
+  </div>
+</div>
+
+<!-- 登録完了画面 -->
+<div id="complete-screen">
+  <span class="complete-icon">✅</span>
+  <p class="complete-title">登録完了！</p>
+  <span class="complete-badge" id="complete-badge"></span>
+  <p class="complete-note">画面をタップして戻る</p>
+</div>
+
+<script>
+  var FORM_BASE = 'https://docs.google.com/forms/d/18RIeEsGAyXZM98cuJW_Ooa6ZrLx2UsgETl589nQN_U4/formResponse';
+  var ENTRY     = 'entry.1827699774';
+  var HOME      = 'https://te2suzuki-alt.github.io/registration/';
+
+  var counts = { business: 0, sports: 0, arts: 0, music: 0 };
+
+  // 戻ってきたときにカウンターを復元
+  try {
+    var saved = JSON.parse(sessionStorage.getItem('counts'));
+    if (saved) counts = saved;
+  } catch(e) {}
+
+  // 戻ってきた場合の処理
+  if (registeredMajor && registeredKey) {
+    counts[registeredKey]++;
+    sessionStorage.setItem('counts', JSON.stringify(counts));
+    updateCounters();
+    showComplete(registeredMajor, registeredKey);
+  } else {
+    updateCounters();
+  }
+
+  function register(majorName, majorKey) {
+    // カウントを保存してからフォームURLへ飛ぶ
+    sessionStorage.setItem('pending', JSON.stringify({ name: majorName, key: majorKey }));
+    var url = FORM_BASE
+      + '?' + ENTRY + '=' + encodeURIComponent(majorName)
+      + '&submit=Submit'
+      + '&continue=' + encodeURIComponent(HOME + '?r=' + encodeURIComponent(majorName) + '&k=' + majorKey);
+    window.location.href = url;
+  }
+
+  function showComplete(majorName, majorKey) {
+    var badge = document.getElementById('complete-badge');
+    badge.textContent = majorName + '専攻';
+    badge.className = 'complete-badge ' + majorKey;
+    var screen = document.getElementById('complete-screen');
+    screen.classList.add('show');
+    screen.onclick = function() { screen.classList.remove('show'); };
+    setTimeout(function() { screen.classList.remove('show'); }, 3000);
+  }
+
+  function updateCounters() {
+    for (var key in counts) {
+      document.getElementById('cnt-' + key).textContent = counts[key];
+    }
+  }
 </script>
 </body>
 </html>
