@@ -25,256 +25,92 @@
     flex-direction: column;
     align-items: center;
     padding: 2rem 1.5rem 3rem;
-    /* 縦長タブレット向け */
   }
 
-  header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
+  header { text-align: center; margin-bottom: 2.5rem; }
 
   .event-label {
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #888;
-    margin-bottom: 8px;
+    font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: #888; margin-bottom: 8px;
   }
 
-  h1 {
-    font-size: 30px;
-    font-weight: 900;
-    color: #1a1a1a;
-    line-height: 1.2;
-  }
+  h1 { font-size: 30px; font-weight: 900; color: #1a1a1a; line-height: 1.2; }
 
-  .instruction {
-    margin-top: 10px;
-    font-size: 15px;
-    color: #555;
-  }
+  .instruction { margin-top: 10px; font-size: 15px; color: #555; }
 
   .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-    width: 100%;
-    max-width: 560px;
-    margin-bottom: 3rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 18px; width: 100%; max-width: 560px; margin-bottom: 3rem;
   }
 
   .card {
-    position: relative;
-    border-radius: var(--card-radius);
-    overflow: hidden;
-    cursor: pointer;
-    aspect-ratio: 1 / 1.1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    border: none;
-    outline: none;
+    position: relative; border-radius: var(--card-radius); overflow: hidden;
+    cursor: pointer; aspect-ratio: 1 / 1.1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; border: none; outline: none;
     transition: transform 0.15s cubic-bezier(.2,.8,.4,1), box-shadow 0.15s;
     box-shadow: 0 4px 20px rgba(0,0,0,0.10);
-    user-select: none;
-    -webkit-user-select: none;
+    user-select: none; -webkit-user-select: none;
   }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: inherit;
-    z-index: 0;
-  }
-
-  .card:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  }
-
+  .card::before { content: ''; position: absolute; inset: 0; background: inherit; z-index: 0; }
+  .card:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
   .card.business { background: var(--business); }
   .card.sports   { background: var(--sports); }
   .card.arts     { background: var(--arts); }
   .card.music    { background: var(--music); }
-
-  .card-icon {
-    font-size: 52px;
-    line-height: 1;
-    position: relative;
-    z-index: 1;
-  }
-
-  .card-label {
-    font-size: 20px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.1em;
-    position: relative;
-    z-index: 1;
-  }
-
-  .card-sub {
-    font-size: 11px;
-    color: rgba(255,255,255,0.55);
-    letter-spacing: 0.08em;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* 装飾の丸 */
   .card::after {
-    content: '';
-    position: absolute;
-    width: 150%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    bottom: -40%;
-    right: -30%;
-    z-index: 0;
+    content: ''; position: absolute; width: 150%; aspect-ratio: 1;
+    border-radius: 50%; background: rgba(255,255,255,0.06);
+    bottom: -40%; right: -30%; z-index: 0;
   }
+  .card-icon  { font-size: 52px; line-height: 1; position: relative; z-index: 1; }
+  .card-label { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.1em; position: relative; z-index: 1; }
+  .card-sub   { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.08em; position: relative; z-index: 1; }
 
-  /* カウンター */
-  .counters {
-    width: 100%;
-    max-width: 560px;
-  }
+  .counters { width: 100%; max-width: 560px; }
+  .counters h2 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 14px; }
 
-  .counters h2 {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #888;
-    margin-bottom: 14px;
-  }
-
-  .counter-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
+  .counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .counter-item {
-    background: #fff;
-    border-radius: 14px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background: #fff; border-radius: 14px; padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
     box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   }
-
-  .counter-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
+  .counter-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
   .counter-item.business .counter-dot { background: var(--business); }
   .counter-item.sports   .counter-dot { background: var(--sports); }
   .counter-item.arts     .counter-dot { background: var(--arts); }
   .counter-item.music    .counter-dot { background: var(--music); }
+  .counter-name { font-size: 13px; color: #333; font-weight: 700; flex: 1; }
+  .counter-num  { font-size: 24px; font-weight: 900; color: #1a1a1a; }
 
-  .counter-name {
-    font-size: 13px;
-    color: #333;
-    font-weight: 700;
-    flex: 1;
-  }
-
-  .counter-num {
-    font-size: 24px;
-    font-weight: 900;
-    color: #1a1a1a;
-  }
-
-  /* オーバーレイ */
   #overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    z-index: 100; align-items: center; justify-content: center;
   }
-
-  #overlay.show {
-    display: flex;
-  }
-
+  #overlay.show { display: flex; }
   .overlay-box {
-    background: #fff;
-    border-radius: 24px;
-    padding: 40px 36px;
-    text-align: center;
-    max-width: 300px;
-    width: 85%;
+    background: #fff; border-radius: 24px; padding: 40px 36px;
+    text-align: center; max-width: 300px; width: 85%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
   }
-
-  .overlay-icon {
-    font-size: 60px;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .overlay-title {
-    font-size: 22px;
-    font-weight: 900;
-    color: #1a1a1a;
-    margin-bottom: 6px;
-  }
-
+  .overlay-icon  { font-size: 60px; margin-bottom: 16px; display: block; }
+  .overlay-title { font-size: 22px; font-weight: 900; color: #1a1a1a; margin-bottom: 6px; }
   .overlay-major {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    padding: 6px 18px;
-    border-radius: 20px;
-    display: inline-block;
-    margin-top: 4px;
+    font-size: 16px; font-weight: 700; margin-bottom: 8px;
+    padding: 6px 18px; border-radius: 20px; display: inline-block; margin-top: 4px;
   }
   .overlay-major.business { background: #e8eaf6; color: var(--business); }
   .overlay-major.sports   { background: #e8f5e9; color: var(--sports); }
   .overlay-major.arts     { background: #fce4ec; color: var(--arts); }
   .overlay-major.music    { background: #ede7f6; color: var(--music); }
+  .overlay-note { font-size: 12px; color: #aaa; margin-top: 16px; }
 
-  .overlay-note {
-    font-size: 12px;
-    color: #aaa;
-    margin-top: 16px;
-  }
-
-  /* エラーメッセージ */
-  #error-msg {
-    display: none;
-    background: #fff3f3;
-    border: 1px solid #f5c6cb;
-    color: #c0392b;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-    margin-top: 16px;
-    max-width: 560px;
-    width: 100%;
-    text-align: center;
-  }
-
-  /* ローディング */
   .spinner {
-    display: none;
-    width: 24px; height: 24px;
-    border: 3px solid #eee;
-    border-top-color: #555;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin: 12px auto 0;
+    display: none; width: 24px; height: 24px;
+    border: 3px solid #eee; border-top-color: #555;
+    border-radius: 50%; animation: spin 0.7s linear infinite; margin: 12px auto 0;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -336,9 +172,6 @@
   </div>
 </div>
 
-<div id="error-msg"></div>
-
-<!-- 登録完了オーバーレイ -->
 <div id="overlay" onclick="closeOverlay()">
   <div class="overlay-box">
     <span class="overlay-icon">✅</span>
@@ -350,49 +183,34 @@
 </div>
 
 <script>
-  // ========================================
-  // ▼▼▼ ここにGASのURLを貼り付けてください ▼▼▼
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwQ3ACm6_bI4YUAUbQu1jx4n3NhMq7PrhXE978Z3Kq7zKOKDAYLUgiw7Tv8qFOM2rmTDw/exec';
-  // ▲▲▲ ここにGASのURLを貼り付けてください ▲▲▲
-  // ========================================
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbwQ3ACm6_bI4YUAUbQu1jx4n3NhMq7PrhXE978Z3Kq7zKOKDAYLUgiw7Tv8qFOM2rmTDw/exec';
 
-  const counts = { business: 0, sports: 0, arts: 0, music: 0 };
-  let sending = false;
+  var counts = { business: 0, sports: 0, arts: 0, music: 0 };
+  var sending = false;
 
-  async function register(majorName, majorKey) {
+  function register(majorName, majorKey) {
     if (sending) return;
     sending = true;
 
-    // カウンター更新（即時フィードバック）
+    // カウンター更新
     counts[majorKey]++;
     document.getElementById('cnt-' + majorKey).textContent = counts[majorKey];
 
     // オーバーレイ表示
-    const label = document.getElementById('overlay-label');
+    var label = document.getElementById('overlay-label');
     label.textContent = majorName + '専攻';
     label.className = 'overlay-major ' + majorKey;
     document.getElementById('overlay').classList.add('show');
-    document.getElementById('error-msg').style.display = 'none';
+    document.getElementById('spinner').style.display = 'block';
 
-    // GASへ送信（GET方式）
-    if (GAS_URL && GAS_URL !== 'YOUR_GAS_URL_HERE') {
-      document.getElementById('spinner').style.display = 'block';
-      try {
-        var sendURL = GAS_URL + '?major=' + encodeURIComponent(majorName);
-        await fetch(sendURL, { method: 'GET', mode: 'no-cors' });
-      } catch (err) {
-        counts[majorKey]--;
-        document.getElementById('cnt-' + majorKey).textContent = counts[majorKey];
-        document.getElementById('error-msg').textContent = '送信エラーが発生しました。ネットワークを確認してください。';
-        document.getElementById('error-msg').style.display = 'block';
-        document.getElementById('overlay').classList.remove('show');
-      }
+    // GASへ送信（Image beacon方式）
+    var img = new Image();
+    img.onload = img.onerror = function() {
       document.getElementById('spinner').style.display = 'none';
-    }
+    };
+    img.src = GAS_URL + '?major=' + encodeURIComponent(majorName) + '&t=' + Date.now();
 
     sending = false;
-
-    // 2.5秒後に自動で閉じる
     setTimeout(closeOverlay, 2500);
   }
 
