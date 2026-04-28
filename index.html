@@ -45,7 +45,6 @@
     transition: transform 0.15s cubic-bezier(.2,.8,.4,1), box-shadow 0.15s;
     box-shadow: 0 4px 20px rgba(0,0,0,0.10);
     user-select: none; -webkit-user-select: none;
-    text-decoration: none;
   }
   .card::before { content: ''; position: absolute; inset: 0; background: inherit; z-index: 0; }
   .card:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -78,7 +77,6 @@
   .counter-name { font-size: 13px; color: #333; font-weight: 700; flex: 1; }
   .counter-num  { font-size: 24px; font-weight: 900; color: #1a1a1a; }
 
-  /* オーバーレイ */
   #overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -160,6 +158,13 @@
   </div>
 </div>
 
+<!-- 非表示フォーム（Google Formsへ送信用） -->
+<iframe name="hidden_iframe" style="display:none;"></iframe>
+<form id="gform" target="hidden_iframe" method="POST"
+  action="https://docs.google.com/forms/d/18RIeEsGAyXZM98cuJW_Ooa6ZrLx2UsgETl589nQN_U4/formResponse">
+  <input type="hidden" name="entry.1827699774" id="major-input">
+</form>
+
 <div id="overlay" onclick="closeOverlay()">
   <div class="overlay-box">
     <span class="overlay-icon">✅</span>
@@ -170,8 +175,6 @@
 </div>
 
 <script>
-  var GAS_URL = 'https://script.google.com/macros/s/AKfycbwQ3ACm6_bI4YUAUbQu1jx4n3NhMq7PrhXE978Z3Kq7zKOKDAYLUgiw7Tv8qFOM2rmTDw/exec';
-
   var counts = { business: 0, sports: 0, arts: 0, music: 0 };
 
   function register(majorName, majorKey) {
@@ -179,44 +182,21 @@
     counts[majorKey]++;
     document.getElementById('cnt-' + majorKey).textContent = counts[majorKey];
 
+    // Google Formsへ送信
+    document.getElementById('major-input').value = majorName;
+    document.getElementById('gform').submit();
+
     // オーバーレイ表示
     var label = document.getElementById('overlay-label');
     label.textContent = majorName + '専攻';
     label.className = 'overlay-major ' + majorKey;
     document.getElementById('overlay').classList.add('show');
 
-    // GASへ送信（iframeで非表示送信）
-    var iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = GAS_URL + '?major=' + encodeURIComponent(majorName) + '&t=' + Date.now();
-    document.body.appendChild(iframe);
-    setTimeout(function() {
-      document.body.removeChild(iframe);
-    }, 5000);
-
     setTimeout(closeOverlay, 2500);
   }
 
   function closeOverlay() {
     document.getElementById('overlay').classList.remove('show');
-  }
-
-  // URL経由で戻ってきた場合の処理
-  var params = new URLSearchParams(window.location.search);
-  if (params.get('registered')) {
-    var major = params.get('registered');
-    var keyMap = { 'ビジネス': 'business', 'スポーツ': 'sports', '美術': 'arts', '音楽': 'music' };
-    var key = keyMap[major];
-    if (key) {
-      counts[key]++;
-      document.getElementById('cnt-' + key).textContent = counts[key];
-      var label = document.getElementById('overlay-label');
-      label.textContent = major + '専攻';
-      label.className = 'overlay-major ' + key;
-      document.getElementById('overlay').classList.add('show');
-      setTimeout(closeOverlay, 2500);
-      history.replaceState({}, '', window.location.pathname);
-    }
   }
 </script>
 </body>
