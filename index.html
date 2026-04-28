@@ -352,7 +352,7 @@
 <script>
   // ========================================
   // ▼▼▼ ここにGASのURLを貼り付けてください ▼▼▼
-  const GAS_URL = 'YOUR_GAS_URL_HERE';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwQ3ACm6_bI4YUAUbQu1jx4n3NhMq7PrhXE978Z3Kq7zKOKDAYLUgiw7Tv8qFOM2rmTDw/exec';
   // ▲▲▲ ここにGASのURLを貼り付けてください ▲▲▲
   // ========================================
 
@@ -374,16 +374,12 @@
     document.getElementById('overlay').classList.add('show');
     document.getElementById('error-msg').style.display = 'none';
 
-    // GASへ送信
+    // GASへ送信（GET方式）
     if (GAS_URL && GAS_URL !== 'YOUR_GAS_URL_HERE') {
       document.getElementById('spinner').style.display = 'block';
       try {
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ major: majorName, timestamp: new Date().toISOString() })
-        });
+        var sendURL = GAS_URL + '?major=' + encodeURIComponent(majorName);
+        await fetch(sendURL, { method: 'GET', mode: 'no-cors' });
       } catch (err) {
         counts[majorKey]--;
         document.getElementById('cnt-' + majorKey).textContent = counts[majorKey];
