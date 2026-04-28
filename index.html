@@ -28,14 +28,8 @@
   }
 
   header { text-align: center; margin-bottom: 2.5rem; }
-
-  .event-label {
-    font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
-    color: #888; margin-bottom: 8px;
-  }
-
+  .event-label { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #888; margin-bottom: 8px; }
   h1 { font-size: 30px; font-weight: 900; color: #1a1a1a; line-height: 1.2; }
-
   .instruction { margin-top: 10px; font-size: 15px; color: #555; }
 
   .grid {
@@ -51,6 +45,7 @@
     transition: transform 0.15s cubic-bezier(.2,.8,.4,1), box-shadow 0.15s;
     box-shadow: 0 4px 20px rgba(0,0,0,0.10);
     user-select: none; -webkit-user-select: none;
+    text-decoration: none;
   }
   .card::before { content: ''; position: absolute; inset: 0; background: inherit; z-index: 0; }
   .card:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -69,7 +64,6 @@
 
   .counters { width: 100%; max-width: 560px; }
   .counters h2 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 14px; }
-
   .counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .counter-item {
     background: #fff; border-radius: 14px; padding: 14px 16px;
@@ -84,6 +78,7 @@
   .counter-name { font-size: 13px; color: #333; font-weight: 700; flex: 1; }
   .counter-num  { font-size: 24px; font-weight: 900; color: #1a1a1a; }
 
+  /* オーバーレイ */
   #overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -98,21 +93,14 @@
   .overlay-icon  { font-size: 60px; margin-bottom: 16px; display: block; }
   .overlay-title { font-size: 22px; font-weight: 900; color: #1a1a1a; margin-bottom: 6px; }
   .overlay-major {
-    font-size: 16px; font-weight: 700; margin-bottom: 8px;
-    padding: 6px 18px; border-radius: 20px; display: inline-block; margin-top: 4px;
+    font-size: 16px; font-weight: 700; padding: 6px 18px;
+    border-radius: 20px; display: inline-block; margin-top: 4px;
   }
   .overlay-major.business { background: #e8eaf6; color: var(--business); }
   .overlay-major.sports   { background: #e8f5e9; color: var(--sports); }
   .overlay-major.arts     { background: #fce4ec; color: var(--arts); }
   .overlay-major.music    { background: #ede7f6; color: var(--music); }
   .overlay-note { font-size: 12px; color: #aaa; margin-top: 16px; }
-
-  .spinner {
-    display: none; width: 24px; height: 24px;
-    border: 3px solid #eee; border-top-color: #555;
-    border-radius: 50%; animation: spin 0.7s linear infinite; margin: 12px auto 0;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -177,7 +165,6 @@
     <span class="overlay-icon">✅</span>
     <p class="overlay-title">登録完了！</p>
     <span class="overlay-major" id="overlay-label"></span>
-    <div class="spinner" id="spinner"></div>
     <p class="overlay-note">画面をタップして戻る</p>
   </div>
 </div>
@@ -186,12 +173,8 @@
   var GAS_URL = 'https://script.google.com/macros/s/AKfycbwQ3ACm6_bI4YUAUbQu1jx4n3NhMq7PrhXE978Z3Kq7zKOKDAYLUgiw7Tv8qFOM2rmTDw/exec';
 
   var counts = { business: 0, sports: 0, arts: 0, music: 0 };
-  var sending = false;
 
   function register(majorName, majorKey) {
-    if (sending) return;
-    sending = true;
-
     // カウンター更新
     counts[majorKey]++;
     document.getElementById('cnt-' + majorKey).textContent = counts[majorKey];
@@ -201,21 +184,39 @@
     label.textContent = majorName + '専攻';
     label.className = 'overlay-major ' + majorKey;
     document.getElementById('overlay').classList.add('show');
-    document.getElementById('spinner').style.display = 'block';
 
-    // GASへ送信（Image beacon方式）
-    var img = new Image();
-    img.onload = img.onerror = function() {
-      document.getElementById('spinner').style.display = 'none';
-    };
-    img.src = GAS_URL + '?major=' + encodeURIComponent(majorName) + '&t=' + Date.now();
+    // GASへ送信（iframeで非表示送信）
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = GAS_URL + '?major=' + encodeURIComponent(majorName) + '&t=' + Date.now();
+    document.body.appendChild(iframe);
+    setTimeout(function() {
+      document.body.removeChild(iframe);
+    }, 5000);
 
-    sending = false;
     setTimeout(closeOverlay, 2500);
   }
 
   function closeOverlay() {
     document.getElementById('overlay').classList.remove('show');
+  }
+
+  // URL経由で戻ってきた場合の処理
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('registered')) {
+    var major = params.get('registered');
+    var keyMap = { 'ビジネス': 'business', 'スポーツ': 'sports', '美術': 'arts', '音楽': 'music' };
+    var key = keyMap[major];
+    if (key) {
+      counts[key]++;
+      document.getElementById('cnt-' + key).textContent = counts[key];
+      var label = document.getElementById('overlay-label');
+      label.textContent = major + '専攻';
+      label.className = 'overlay-major ' + key;
+      document.getElementById('overlay').classList.add('show');
+      setTimeout(closeOverlay, 2500);
+      history.replaceState({}, '', window.location.pathname);
+    }
   }
 </script>
 </body>
